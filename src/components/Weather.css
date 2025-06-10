@@ -1,0 +1,8 @@
+.daily-forecast {
+  display: flex;
+  flex-direction: row;
+}
+
+.forecast-item {
+  padding: 5px;
+}

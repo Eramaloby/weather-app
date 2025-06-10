@@ -3,11 +3,10 @@ import { WeatherApiResponce, WeatherApiData } from './types/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
-const CITY_ID = 524901;
 
-export const fetchWeather = createAsyncThunk<WeatherApiData>(
+export const fetchWeather = createAsyncThunk<WeatherApiData, string>(
   'weather/fetchWeather',
-  async () => {
+  async (cityOrCityId: string, { rejectWithValue }) => {
     if (!API_KEY) {
       throw new Error(
         'API_ERROR is not defined. Set REACT_APP_OPENWEATHER_API_KEY in .env file.'
@@ -15,13 +14,21 @@ export const fetchWeather = createAsyncThunk<WeatherApiData>(
     }
 
     try {
-      const responce: WeatherApiResponce = await axios.get(
-        `http://api.openweathermap.org/data/2.5/forecast?id=${CITY_ID}&appid=${API_KEY}&units=metric`
-      );
+      const isCityId = !isNaN(Number(cityOrCityId));
+
+      const url = isCityId
+        ? `http://api.openweathermap.org/data/2.5/forecast?id=${cityOrCityId}&appid=${API_KEY}&units=metric`
+        : `http://api.openweathermap.org/data/2.5/forecast?q=${cityOrCityId}&appid=${API_KEY}&units=metric`;
+
+      const responce: WeatherApiResponce = await axios.get(url);
       console.log('data', responce.data);
       return responce.data;
     } catch (error) {
-      throw error;
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || error.message;
+        return rejectWithValue(errorMessage);
+      }
+      return rejectWithValue('An unknown error occurred');
     }
   }
 );

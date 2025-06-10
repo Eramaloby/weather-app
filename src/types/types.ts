@@ -26,7 +26,7 @@ interface Coords {
   lon: number;
 }
 
-interface ForecastItem {
+export interface ForecastItem {
   clouds: Clouds;
   dt: number;
   dt_txt: string;
@@ -34,7 +34,7 @@ interface ForecastItem {
   pop: number;
   sys: Sys;
   visibility: number;
-  weather: Weather;
+  weather: Weather[];
   wind: Wind;
 }
 
@@ -77,7 +77,8 @@ export interface WeatherState {
   data: WeatherApiData | null;
   city: string;
   isLoading: boolean;
-  error: Error | null;
+  error: string | null;
   history: string[];
   favorites: string[];
+  defaultCity: string;
 }
