@@ -20,9 +20,9 @@ export const fetchWeather = createAsyncThunk<WeatherApiData, string>(
         ? `http://api.openweathermap.org/data/2.5/forecast?id=${cityOrCityId}&appid=${API_KEY}&units=metric`
         : `http://api.openweathermap.org/data/2.5/forecast?q=${cityOrCityId}&appid=${API_KEY}&units=metric`;
 
-      const responce: WeatherApiResponce = await axios.get(url);
-      console.log('data', responce.data);
-      return responce.data;
+      const response: WeatherApiResponce = await axios.get(url);
+      console.log('data', response.data);
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || error.message;

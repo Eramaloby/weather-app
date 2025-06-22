@@ -60,6 +60,17 @@ export const weatherSlice = createSlice({
         JSON.stringify(state.favorites)
       );
     },
+    removeCityFromFavorites: (
+      state: WeatherState,
+      action: PayloadAction<string>
+    ) => {
+      const newCity = action.payload;
+      state.favorites = state.favorites.filter((city) => city !== newCity);
+      localStorage.setItem(
+        LOCAL_STORAGE_FAVORITES_KEY,
+        JSON.stringify(state.favorites)
+      );
+    },
     setDefaultCity: (state: WeatherState, action: PayloadAction<string>) => {
       const newCity = action.payload;
       if (newCity !== state.defaultCity) {
@@ -103,7 +114,11 @@ export const weatherSlice = createSlice({
   },
 });
 
-export const { addCityToHistory, addCityToFavorites, setDefaultCity } =
-  weatherSlice.actions;
+export const {
+  addCityToHistory,
+  addCityToFavorites,
+  removeCityFromFavorites,
+  setDefaultCity,
+} = weatherSlice.actions;
 
 export default weatherSlice.reducer;

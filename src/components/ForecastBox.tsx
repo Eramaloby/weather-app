@@ -10,7 +10,7 @@ const ForecastBox: React.FC<ForecastBoxProps> = ({ forecastItem }) => {
   return (
     <div className='forecast-item'>
       <h2>{new Date(forecastItem.dt_txt).toLocaleTimeString().slice(0, 5)}</h2>
-      <p>{forecastItem.main.temp}</p>
+      <p>{forecastItem.main.temp}°C</p>
     </div>
   );
 };

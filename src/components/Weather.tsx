@@ -6,6 +6,7 @@ import { RootState, AppDispatch } from '../app/store';
 import {
   setDefaultCity,
   addCityToFavorites,
+  removeCityFromFavorites,
 } from '../features/weather/weatherSlice';
 
 import ForecastBox from './ForecastBox';
@@ -39,8 +40,12 @@ const Weather: React.FC = () => {
     dispatch(setDefaultCity(city));
   };
 
-  const handleAddCityToFavorites = (city: string) => {
-    dispatch(addCityToFavorites(city));
+  const handleToggleFavorites = (city: string) => {
+    if (favorites.includes(city)) {
+      dispatch(removeCityFromFavorites(city));
+    } else {
+      dispatch(addCityToFavorites(city));
+    }
   };
 
   useEffect(() => {
@@ -50,42 +55,67 @@ const Weather: React.FC = () => {
   }, [dispatch, data, isLoading, error, defaultCity]);
 
   return (
-    <div>
-      {data && (
-        <button onClick={() => handleDefaultCity(data.city.name)}>
-          Set as default city
-        </button>
-      )}
-      {history.length > 0 &&
-        history.map((city, index) => (
-          <button name={city} key={index} onClick={() => handleHistory(city)}>
-            {city}
+    <div className='weather-container'>
+      <h1>Weather App</h1>
+      <div className='search-section'>
+        <div className='input-group'>
+          <input
+            type='text'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          ></input>
+          <button className='search-button' onClick={handleSubmit}>
+            {isLoading ? 'Loading...' : 'Search for weather'}
           </button>
-        ))}
-      <form onSubmit={handleSubmit}>
-        <input
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        ></input>
-        <button type='submit'>Search for weather</button>
-      </form>
-      {!data && <div>No data</div>}
+        </div>
+      </div>
+
+      {isLoading && (
+        <div className='loading-message'>Loading weather data...</div>
+      )}
+      {error && <div className='error-message'> Error: {error}</div>}
+
       {data && (
-        <div>
+        <div className='current-weather-card'>
+          <div className='header-section'>
+            <h2>
+              <span>
+                {data.city.name}, {data.city.country}
+              </span>
+            </h2>
+            <div className='card-buttons'>
+              <button
+                onClick={() => handleToggleFavorites(data.city.name)}
+                className={
+                  favorites.includes(data.city.name)
+                    ? 'remove-from-favorites-button'
+                    : 'add-to-favorites-button'
+                }
+              >
+                {favorites.includes(data.city.name)
+                  ? 'Remove from favorites'
+                  : 'Add to favorites'}
+              </button>
+              <button onClick={() => handleDefaultCity(data.city.name)}>
+                Set as default city
+              </button>
+            </div>
+          </div>
+
           <div className='current-forecast'>
-            <h1>{data.city.name}</h1>
-            <p>Current temperature: {data.list[0].main.temp}</p>
-            <p>Feels like: {data.list[0].main.feels_like}</p>
-            <p>{data.list[0].weather[0].description}</p>
-            <button onClick={() => handleAddCityToFavorites(data.city.name)}>
-              Add to favorites
-            </button>
             <img
               alt={data.list[0].weather[0].description}
               src={getWeatherIconUrl(data.list[0].weather[0].icon)}
+              className='weather-icon'
             ></img>
+            <p className='temperature'>{data.list[0].main.temp.toFixed(1)}°C</p>{' '}
+            <p className='description'>{data.list[0].weather[0].description}</p>
+            <p>Feels like: {data.list[0].main.feels_like.toFixed(1)}°C</p>
+            <p>Humidity: {data.list[0].main.humidity}%</p>
+            <p>Wind Speed: {data.list[0].wind.speed.toFixed(1)} m/s</p>
           </div>
-          <div className='daily-forecast'>
+
+          <div className='forecast-list'>
             {data.list.slice(1, 9).map((forecastItem, index) => {
               return (
                 <ForecastBox
@@ -97,18 +127,38 @@ const Weather: React.FC = () => {
           </div>
         </div>
       )}
-      {favorites && (
-        <div>
-          <h2>Favorite cities</h2>
-          {favorites.map((favorite, index) => (
-            <button key={index} onClick={() => handleHistory(favorite)}>
-              {favorite}
-            </button>
-          ))}
+
+      {history.length > 0 && (
+        <div className='history-section'>
+          <h2>History</h2>
+          <ul className='city-list'>
+            {history.map((city, index) => (
+              <li key={index}>
+                <button name={city} onClick={() => handleHistory(city)}>
+                  {city}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
-      {isLoading && <div>Loading weather data...</div>}
-      {error && <div> Error: {error}</div>}
+      {favorites && (
+        <div className='favorites-section'>
+          <h2>Favorite cities</h2>
+          <ul className='city-list'>
+            {favorites.map((favorite, index) => (
+              <li key={index}>
+                <button
+                  onClick={() => handleHistory(favorite)}
+                  className='favorites-city-button'
+                >
+                  {favorite}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
