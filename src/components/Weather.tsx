@@ -96,7 +96,10 @@ const Weather: React.FC = () => {
                   ? 'Remove from favorites'
                   : 'Add to favorites'}
               </button>
-              <button onClick={() => handleDefaultCity(data.city.name)}>
+              <button
+                onClick={() => handleDefaultCity(data.city.name)}
+                className='set-default-city-button'
+              >
                 Set as default city
               </button>
             </div>
