@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { WeatherApiResponce, WeatherApiData } from './types/types';
+import { WeatherApiResponse, WeatherApiData } from './types/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
@@ -20,7 +20,7 @@ export const fetchWeather = createAsyncThunk<WeatherApiData, string>(
         ? `http://api.openweathermap.org/data/2.5/forecast?id=${cityOrCityId}&appid=${API_KEY}&units=metric`
         : `http://api.openweathermap.org/data/2.5/forecast?q=${cityOrCityId}&appid=${API_KEY}&units=metric`;
 
-      const response: WeatherApiResponce = await axios.get(url);
+      const response: WeatherApiResponse = await axios.get(url);
       console.log('data', response.data);
       return response.data;
     } catch (error) {

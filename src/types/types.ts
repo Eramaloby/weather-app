@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-export interface WeatherApiResponce extends AxiosResponse<WeatherApiData> {}
+export interface WeatherApiResponse extends AxiosResponse<WeatherApiData> {}
 
 export interface WeatherApiData {
   city: City;
